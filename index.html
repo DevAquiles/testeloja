@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Frecoli | Fragrâncias e Acessórios</title>
+    <link rel="shortcut icon" href="icone.ico" type="image/x-icon">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0A0A0A;
+            --card: #121212;
+            --txt: #FFFFFF;
+            --muted: #8E8E93;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #FFFFFF;
+        }
+
+        /* 1. RESET E BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--txt);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .upper {
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 0.7rem;
+        }
+
+        /* 2. HEADER PREMIUM */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-weight: 600;
+            letter-spacing: 4px;
+            border: 1px solid white;
+            padding: 5px 15px;
+            cursor: pointer;
+        }
+
+        /* CARRINHO ÍCONE */
+        .cart-trigger {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cart-count {
+            background: var(--txt);
+            color: #000;
+            font-size: 0.6rem;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        /* 3. DRAWERS (MENUS LATERAIS) */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            padding: 80px 40px;
+            transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border-left: 1px solid var(--border);
+        }
+
+        .drawer.active {
+            right: 0;
+        }
+
+        .drawer-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* 4. SEÇÕES DO SITE */
+        section {
+            min-height: 100vh;
+            padding: 120px 5% 60px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        section.active {
+            display: flex;
+        }
+
+        /* Botões Gerais */
+        .btn-white {
+            width: 100%;
+            padding: 18px;
+            background: var(--txt);
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+
+        .btn-outline {
+            width: 100%;
+            padding: 15px;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--txt);
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+
+        /* 5. LOJA E PRODUTOS */
+        .store-grid {
+            display: grid;
+            width: 100%;
+            max-width: 1200px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .prod-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 20px;
+            text-align: left;
+        }
+
+        .img-box {
+            width: 100%;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .price {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            color: var(--muted);
+        }
+
+        .desc-text {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* 6. FOOTER (RODAPÉ) */
+        footer {
+            background: #000;
+            padding: 80px 5% 40px;
+            border-top: 1px solid var(--border);
+            margin-top: 50px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            text-align: left;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+        }
+
+        .footer-title {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .footer-link {
+            display: block;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        .footer-link:hover {
+            color: var(--txt);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+            padding-top: 30px;
+            text-align: center;
+            font-size: 0.6rem;
+            color: #444;
+            letter-spacing: 2px;
+        }
+
+        /* 7. ADM E INPUTS */
+        #panel-adm {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 3000;
+            display: none;
+            padding: 60px 5%;
+            overflow-y: auto;
+        }
+
+        input,
+        textarea {
+            background: #111;
+            border: 1px solid var(--border);
+            padding: 15px;
+            color: #fff;
+            width: 100%;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        /* Itens no Carrinho */
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+        }
+
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo upper" onclick="location.reload()">Frecoli</div>
+        <div class="cart-trigger" onclick="toggleDrawer('cart-drawer')">
+            <span class="upper">Carrinho</span>
+            <div class="cart-count" id="cart-count">0</div>
+        </div>
+    </header>
+
+    <div id="cart-drawer" class="drawer">
+        <div class="drawer-close" onclick="toggleDrawer('cart-drawer')">&times;</div>
+        <h2 class="serif" style="margin-bottom: 30px;">Sua Sacola</h2>
+        <div id="cart-items-list"></div>
+        <div id="cart-footer"
+            style="display: none; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+                <span class="upper">Total</span>
+                <span id="total-value" class="serif" style="font-size: 1.5rem;">0 Kz</span>
+            </div>
+            <button class="btn-white upper" onclick="checkoutWA()">Finalizar via WhatsApp</button>
+        </div>
+    </div>
+
+    <div id="menu-drawer" class="drawer">
+        <div class="drawer-close" onclick="toggleDrawer('menu-drawer')">&times;</div>
+        <h2 class="serif" style="margin-bottom: 40px;">Menu</h2>
+        <button class="btn-outline upper" onclick="resetApp()">Reiniciar Quiz</button>
+        <button class="btn-outline upper" onclick="openAdm()" style="margin-top: 20px;">Acesso ADM</button>
+    </div>
+
+    <section id="sec-quiz" class="active">
+        <div style="max-width: 500px; width: 100%;">
+            <p class="upper" id="q-step" style="color: var(--muted); margin-bottom: 10px;"></p>
+            <h2 id="q-title" class="serif" style="font-size: 1.8rem; margin-bottom: 40px;">...</h2>
+            <div id="q-options"></div>
+        </div>
+    </section>
+
+    <section id="sec-lead">
+        <div style="max-width: 400px; width: 100%;">
+            <h2 class="serif" style="font-size: 2.2rem;">Identidade</h2>
+            <p class="upper" style="margin: 20px 0; color: var(--muted);">Para acessar a curadoria em Luanda</p>
+            <input type="text" id="lead-n" placeholder="Nome Completo">
+            <input type="tel" id="lead-t" placeholder="WhatsApp (+244)">
+            <button class="btn-white upper" onclick="saveLead()">Abrir Catálogo</button>
+        </div>
+    </section>
+
+    <section id="sec-shop">
+        <p class="upper" style="color: var(--muted);">Catálogo Oficial</p>
+        <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 40px;">Maisson Frecoli</h2>
+        <div class="store-grid" id="shop-list"></div>
+        <p onclick="toggleDrawer('menu-drawer')" style="margin-top: 100px; color: #222; cursor: pointer;" class="upper">
+            Preferências</p>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo upper">Frecoli</div>
+                <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.6;">A essência do luxo e da
+                    sofisticação em Angola. Fragrâncias e acessórios selecionados para quem busca exclusividade.</p>
+            </div>
+            <div>
+                <p class="footer-title">Navegação</p>
+                <a href="#" class="footer-link upper" onclick="resetApp()">Início</a>
+                <a href="#" class="footer-link upper" onclick="nav('shop')">Produtos</a>
+                <a href="#" class="footer-link upper">Termos de Serviço</a>
+            </div>
+            <div>
+                <p class="footer-title">Contacto</p>
+                <p class="footer-link">Luanda, Angola</p>
+                <p class="footer-link">Whatssap: +244 959 481 506</p>
+                <p class="footer-link">E-mail: colifinance99@gmail.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom upper">
+            © 2026 Maison Frecoli. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <div id="panel-adm">
+        <div style="max-width: 500px; margin: 0 auto;">
+            <h2 class="serif">Publicar Item</h2>
+            <input type="text" id="adm-name" placeholder="Nome do Produto">
+            <input type="number" id="adm-price" placeholder="Preço (Kz)">
+            <textarea id="adm-desc" rows="3" placeholder="Descrição (Notas olfativas, Detalhes...)"></textarea>
+            <input type="file" id="adm-img" accept="image/*">
+            <button class="btn-white upper" onclick="handleUpload()">Publicar na Loja</button>
+
+            <h3 class="serif" style="margin-top: 50px;">Gerir Produtos</h3>
+            <div id="adm-items-list" style="margin-top: 20px;"></div>
+            <button class="btn-outline upper" onclick="closeAdm()">Sair do Painel</button>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGICA CORE ---
+        let db = JSON.parse(localStorage.getItem('frecoli_v5')) || { products: [] };
+        let cart = [];
+        let client = localStorage.getItem('frecoli_client') || "";
+
+        const quizData = [
+            { t: "Seu estilo predominante?", o: ["Minimalista", "Impactante", "Clássico"] },
+            { t: "Fragrância de preferência?", o: ["Amadeirada", "Cítrica", "Oriental"] },
+            { t: "Qual o seu destino de uso?", o: ["Trabalho/Dia", "Noite/Eventos"] },
+            { t: "Onde você reside?", o: ["Luanda", "Outra Província"] }
+        ];
+        let step = 0;
+
+        function nav(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`sec-${id}`).classList.add('active');
+            toggleDrawer('menu-drawer');
+            window.scrollTo(0, 0);
+        }
+
+        function toggleDrawer(id) { document.getElementById(id).classList.toggle('active'); }
+
+        // --- QUIZ & LEAD ---
+        function initQuiz() {
+            if (client && step === 0) return nav('shop'), renderShop();
+            const data = quizData[step];
+            document.getElementById('q-step').innerText = `Passo ${step + 1} de ${quizData.length}`;
+            document.getElementById('q-title').innerText = data.t;
+            const container = document.getElementById('q-options');
+            container.innerHTML = '';
+            data.o.forEach(o => {
+                const b = document.createElement('button');
+                b.className = 'btn-outline upper';
+                b.innerText = o;
+                b.onclick = () => {
+                    step++;
+                    if (step < quizData.length) initQuiz();
+                    else nav('lead');
+                };
+                container.appendChild(b);
+            });
+        }
+
+        function saveLead() {
+            const n = document.getElementById('lead-n').value;
+            if (!n) return alert("Identifique-se para continuar.");
+            client = n;
+            localStorage.setItem('frecoli_client', n);
+            nav('shop');
+            renderShop();
+        }
+
+        // --- LOJA & CARRINHO ---
+        function renderShop() {
+            const list = document.getElementById('shop-list');
+            list.innerHTML = '';
+            db.products.forEach((p, i) => {
+                list.innerHTML += `
+                    <div class="prod-card">
+                        <div class="img-box"><img src="${p.img}"></div>
+                        <h3 class="serif">${p.name}</h3>
+                        <p class="price serif">${Number(p.price).toLocaleString()} Kz</p>
+                        <p class="desc-text">${p.desc}</p>
+                        <button class="btn-white upper" onclick="addToCart(${i})">Adicionar à Sacola</button>
+                    </div>
+                `;
+            });
+            renderAdmItems();
+        }
+
+        function addToCart(index) {
+            cart.push(db.products[index]);
+            updateCart();
+            toggleDrawer('cart-drawer');
+        }
+
+        function updateCart() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const list = document.getElementById('cart-items-list');
+            const footer = document.getElementById('cart-footer');
+            list.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                list.innerHTML = '<p class="upper" style="color:#333; margin-top:20px;">Sacola vazia.</p>';
+                footer.style.display = 'none';
+                return;
+            }
+
+            cart.forEach((item, i) => {
+                total += Number(item.price);
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${item.img}">
+                        <div style="flex-grow:1">
+                            <h4 class="serif" style="font-size:0.9rem;">${item.name}</h4>
+                            <p class="small">${item.price} Kz</p>
+                        </div>
+                        <span onclick="removeItem(${i})" style="cursor:pointer; font-size:1.2rem;">&times;</span>
+                    </div>
+                `;
+            });
+            footer.style.display = 'block';
+            document.getElementById('total-value').innerText = total.toLocaleString() + ' Kz';
+        }
+
+        function removeItem(i) { cart.splice(i, 1); updateCart(); }
+
+        function checkoutWA() {
+            let total = 0;
+            let text = cart.map(item => {
+                total += Number(item.price);
+                return `- ${item.name} (${item.price} Kz)`;
+            }).join('%0A');
+            const msg = `Olá Frecoli! Sou ${client}.%0A%0AQuero encomendar:%0A${text}%0A%0ATotal: ${total.toLocaleString()} Kz`;
+            window.open(`https://wa.me/244959481506?text=${msg}`);
+        }
+
+        // --- ADMIN ---
+        function handleUpload() {
+            const n = document.getElementById('adm-name').value;
+            const p = document.getElementById('adm-price').value;
+            const d = document.getElementById('adm-desc').value;
+            const file = document.getElementById('adm-img').files[0];
+
+            if (!n || !file) return alert("Preencha os campos.");
+
+            const r = new FileReader();
+            r.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 600; canvas.height = 600;
+                    canvas.getContext('2d').drawImage(img, 0, 0, 600, 600);
+                    db.products.push({ name: n, price: p, desc: d, img: canvas.toDataURL('image/jpeg', 0.8) });
+                    localStorage.setItem('frecoli_v5', JSON.stringify(db));
+                    renderShop();
+                    alert("Produto publicado!");
+                }
+            }
+            r.readAsDataURL(file);
+        }
+
+        function renderAdmItems() {
+            const l = document.getElementById('adm-items-list');
+            l.innerHTML = '';
+            db.products.forEach((p, i) => {
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #111; font-size:0.8rem;">
+                    <span>${p.name}</span><span onclick="del(${i})" style="color:red; cursor:pointer;">Apagar</span>
+                </div>`;
+            });
+        }
+
+        function del(i) { if (confirm("Apagar item?")) { db.products.splice(i, 1); localStorage.setItem('frecoli_v5', JSON.stringify(db)); renderShop(); } }
+        function openAdm() { if (prompt("Senha:") === "1234") document.getElementById('panel-adm').style.display = 'block'; }
+        function closeAdm() { document.getElementById('panel-adm').style.display = 'none'; toggleDrawer('menu-drawer'); }
+        function resetApp() { localStorage.removeItem('frecoli_client'); location.reload(); }
+
+        initQuiz();
+    </script>
+</body>
+
+</html>
