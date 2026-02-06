@@ -348,7 +348,7 @@
 
     <section id="sec-shop">
         <p class="upper" style="color: var(--muted);">Catálogo Oficial</p>
-        <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 40px;">Maisson Frecoli</h2>
+        <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 40px;">Maison Frecoli</h2>
         <div class="store-grid" id="shop-list"></div>
         <p onclick="toggleDrawer('menu-drawer')" style="margin-top: 100px; color: #222; cursor: pointer;" class="upper">
             Preferências</p>
@@ -550,7 +550,7 @@
         }
 
         function del(i) { if (confirm("Apagar item?")) { db.products.splice(i, 1); localStorage.setItem('frecoli_v5', JSON.stringify(db)); renderShop(); } }
-        function openAdm() { if (prompt("Senha:") === "1234") document.getElementById('panel-adm').style.display = 'block'; }
+        function openAdm() { if (prompt("Senha:") === "frecolivendas") document.getElementById('panel-adm').style.display = 'block'; }
         function closeAdm() { document.getElementById('panel-adm').style.display = 'none'; toggleDrawer('menu-drawer'); }
         function resetApp() { localStorage.removeItem('frecoli_client'); location.reload(); }
 
