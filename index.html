@@ -510,42 +510,57 @@
         }
 
         // 5. BANCO DE DADOS (SUPABASE)
-        async function renderShop() {
-            if (!_supabase) return; // Se não houver conexão, não tenta buscar
+async function renderShop() {
+    if (!_supabase) return;
 
-            const list = document.getElementById('shop-list');
-            const admList = document.getElementById('adm-items-list');
+    const list = document.getElementById('shop-list');
+    const admList = document.getElementById('adm-items-list');
 
-            try {
-                const { data: produtos, error } = await _supabase.from('produtos').select('*');
-                if (error) throw error;
+    try {
+        // Buscamos os dados mais recentes do banco
+        const { data: produtos, error } = await _supabase
+            .from('produtos')
+            .select('*')
+            .order('id', { ascending: false }); // Mostra os novos primeiro
 
-                if (list) list.innerHTML = '';
-                if (admList) admList.innerHTML = '';
+        if (error) throw error;
 
-                produtos.forEach((p) => {
-                    if (list) {
-                        list.innerHTML += `
-                <div class="prod-card">
-                    <div class="img-box"><img src="${p.img}"></div>
-                    <h3 class="serif">${p.name}</h3>
-                    <p class="price serif">${Number(p.price).toLocaleString()} Kz</p>
-                    <p class="desc-text">${p.desc || ''}</p>
-                    <button class="btn-white upper" onclick="addToCart('${p.name}', ${p.price}, '${p.img}')">Adicionar à Sacola</button>
-                </div>`;
-                    }
-                    if (admList) {
-                        admList.innerHTML += `
-                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #111; font-size:0.8rem;">
-                    <span>${p.name}</span>
-                    <span onclick="delProduct(${p.id})" style="color:red; cursor:pointer;">Apagar</span>
-                </div>`;
-                    }
-                });
-            } catch (err) {
-                console.error("Erro ao carregar produtos:", err.message);
-            }
+        // Limpamos os containers antes de renderizar
+        if (list) list.innerHTML = '';
+        if (admList) admList.innerHTML = '';
+
+        if (!produtos || produtos.length === 0) {
+            if (list) list.innerHTML = '<p class="upper">Nenhum produto encontrado.</p>';
+            return;
         }
+
+        produtos.forEach((p) => {
+            // Renderiza na Loja
+            if (list) {
+                list.innerHTML += `
+                <div class="prod-card">
+                    <div class="img-box"><img src="${p.img}" onerror="this.src='https://via.placeholder.com/400?text=Sem+Foto'"></div>
+                    <h3 class="serif">${p.name}</h3>
+                    <p class="price serif">${Number(p.price).toLocaleString()} Kz</p>
+                    <p class="desc-text">${p.desc || ''}</p>
+                    <button class="btn-white upper" onclick="addToCart('${p.name}', ${p.price}, '${p.img}')">Adicionar à Sacola</button>
+                </div>`;
+            }
+            
+            // Renderiza na Gestão ADM
+            if (admList) {
+                admList.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid #222; font-size:0.8rem;">
+                    <span>${p.name}</span>
+                    <button onclick="delProduct(${p.id})" style="background:none; border:1px solid red; color:red; padding:5px 10px; cursor:pointer;">APAGAR</button>
+                </div>`;
+            }
+        });
+
+    } catch (err) {
+        console.error("Erro ao carregar:", err.message);
+    }
+}
 
         // 6. FUNÇÕES DO ADM (VERSÃO CORRIGIDA COM STORAGE)
         async function handleUpload() {
