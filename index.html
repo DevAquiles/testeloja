@@ -1,687 +1,452 @@
 <!DOCTYPE html>
-<html lang="pt-AO">
-
+<html lang="pt-br">
 <head>
-       
     <meta charset="UTF-8">
-       
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>Frecoli | Fragrâncias e Acessórios</title>
-       
+    <title>FRECOLI | Fragrâncias & Acessórios de Luxo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link rel="shortcut icon" href="icone.ico" type="image/x-icon">
-       
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-       
-    <link        
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
-                rel="stylesheet">
-
-        <style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <style>
         :root {
-            --bg: #0A0A0A;
-            --card: #121212;
-            --txt: #FFFFFF;
-            --muted: #8E8E93;
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: #FFFFFF;
+            --gold: #D4AF37;
+            --silver: #C0C0C0;
+            --dark: #000000;
         }
 
-        /* 1. RESET E BASE */
         * {
-            margin: 0;
-            padding: 0;
+            -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background: var(--bg);
-            color: var(--txt);
+            background-color: var(--dark);
+            color: #f4f4f5;
             font-family: 'Montserrat', sans-serif;
+            margin: 0;
             overflow-x: hidden;
         }
 
-        .serif {
-            font-family: 'Playfair Display', serif;
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        .text-luxury {
+            background: linear-gradient(135deg, #D4AF37 0%, #E5E7EB 50%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .upper {
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-size: 0.7rem;
+        .bg-gold-silver {
+            background: linear-gradient(135deg, #B8860B 0%, #C0C0C0 50%, #B8860B 100%);
         }
 
-        /* 2. HEADER PREMIUM */
-        header {
-            position: fixed;
-            top: 0;
+        .input-luxury {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(192, 192, 192, 0.2);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
             width: 100%;
-            z-index: 1000;
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+            font-size: 14px;
         }
 
-        .logo {
-            font-weight: 600;
-            letter-spacing: 4px;
-            border: 1px solid white;
-            padding: 5px 15px;
-            cursor: pointer;
+        .input-luxury:focus {
+            outline: none;
+            border-color: var(--gold);
         }
 
-        /* CARRINHO ÍCONE */
-        .cart-trigger {
-            position: relative;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .cart-count {
-            background: var(--txt);
-            color: #000;
-            font-size: 0.6rem;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-weight: bold;
-        }
-
-        /* 3. DRAWERS (MENUS LATERAIS) */
-        .drawer {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 100%;
-            max-width: 400px;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.98);
-            backdrop-filter: blur(20px);
-            z-index: 2000;
-            padding: 80px 40px;
-            transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            border-left: 1px solid var(--border);
-        }
-
-        .drawer.active {
-            right: 0;
-        }
-
-        .drawer-close {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            font-size: 2rem;
-            cursor: pointer;
-        }
-
-        /* 4. SEÇÕES DO SITE */
-        section {
-            min-height: 100vh;
-            padding: 120px 5% 60px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        section.active {
-            display: flex;
-        }
-
-        /* Botões Gerais */
-        .btn-white {
-            width: 100%;
-            padding: 18px;
-            background: var(--txt);
-            color: #000;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-        }
-
-        .btn-outline {
-            width: 100%;
-            padding: 15px;
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--txt);
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-        }
-
-        /* 5. LOJA E PRODUTOS */
-        .store-grid {
-            display: grid;
-            width: 100%;
-            max-width: 1200px;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
-
-        .prod-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 20px;
-            text-align: left;
-        }
-
-        .img-box {
-            width: 100%;
-            aspect-ratio: 1/1;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .img-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .price {
-            font-size: 1.1rem;
-            margin: 10px 0;
-            color: var(--muted);
-        }
-
-        .desc-text {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        /* 6. FOOTER (RODAPÉ) */
-        footer {
-            background: #000;
-            padding: 80px 5% 40px;
-            border-top: 1px solid var(--border);
-            margin-top: 50px;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            text-align: left;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-size: 1.5rem;
-            letter-spacing: 5px;
-            margin-bottom: 20px;
-        }
-
-        .footer-title {
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            color: var(--muted);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .footer-link {
-            display: block;
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 0.8rem;
-            margin-bottom: 12px;
-            transition: 0.3s;
-        }
-
-        .footer-link:hover {
-            color: var(--txt);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid var(--border);
-            margin-top: 60px;
-            padding-top: 30px;
-            text-align: center;
-            font-size: 0.6rem;
-            color: #444;
-            letter-spacing: 2px;
-        }
-
-        /* 7. ADM E INPUTS */
-        #panel-adm {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 3000;
-            display: none;
-            padding: 60px 5%;
-            overflow-y: auto;
-        }
-
-        input,
-        textarea {
-            background: #111;
-            border: 1px solid var(--border);
-            padding: 15px;
-            color: #fff;
-            width: 100%;
-            margin-bottom: 15px;
-            font-family: inherit;
-        }
-
-        /* Itens no Carrinho */
-        .cart-item {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding: 15px 0;
-        }
-
-        .cart-item img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-        }
-
-        /* Garante que as seções escondidas não ocupem espaço e as ativas sejam elegantes */
-        section {
-            display: none;
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
             opacity: 0;
-            transition: opacity 0.8s ease;
-        }
-
-        section.active {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-            animation: fadeIn 0.8s ease forwards;
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .card-glass {
+            background: linear-gradient(145deg, #0f0f0f, #050505);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .btn-main {
+            background: var(--dark);
+            border: 1px solid var(--gold);
+            color: white;
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .btn-main:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
     </style>
 </head>
+<body class="min-h-screen flex flex-col">
 
-<body>
+    <div id="toast"></div>
 
-        <header>
-                <div class="logo upper" onclick="location.reload()">Frecoli</div>
-                <div class="cart-trigger" onclick="toggleDrawer('cart-drawer')">
-                        <span class="upper">Carrinho</span>
-                        <div class="cart-count" id="cart-count">0</div>
-                    </div>
-            </header>
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5 px-4 md:px-12 py-4 flex justify-between items-center">
+        <div class="text-lg md:text-2xl font-bold tracking-[0.3em] text-luxury uppercase cursor-pointer" onclick="location.reload()">Frecoli</div>
+        <div class="flex items-center gap-3 md:gap-6">
+            <button onclick="toggleAdminPanel()" class="text-[8px] md:text-[10px] uppercase tracking-widest text-gray-500 hover:text-white transition">ADM</button>
+            <div class="relative cursor-pointer p-2" onclick="openCart()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span id="cart-count" class="absolute top-0 right-0 bg-gold-silver text-black text-[9px] font-bold px-1.5 rounded-full min-w-[16px] h-[16px] flex items-center justify-center">0</span>
+            </div>
+        </div>
+    </header>
 
-        <div id="cart-drawer" class="drawer">
-                <div class="drawer-close" onclick="toggleDrawer('cart-drawer')">&times;</div>
-                <h2 class="serif" style="margin-bottom: 30px;">Sua Sacola</h2>
-                <div id="cart-items-list"></div>
-                <div id="cart-footer"            
-            style="display: none; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
-                                <span class="upper">Total</span>
-                                <span id="total-value" class="serif" style="font-size: 1.5rem;">0 Kz</span>
-                            </div>
-                        <button class="btn-white upper" onclick="checkoutWA()">Finalizar via WhatsApp</button>
-                    </div>
-            </div>
+    <main class="flex-grow flex flex-col">
+        
+        <!-- QUIZ SECTIONS -->
+        <section id="quiz-section" class="flex-grow flex flex-col items-center justify-center px-4 py-16 text-center">
+            <div id="quiz-intro" class="fade-in max-w-2xl">
+                <span class="text-[9px] uppercase tracking-[0.4em] text-gold mb-4 block">Seleção Personalizada</span>
+                <h1 class="text-4xl md:text-7xl mb-6 font-serif italic text-luxury leading-tight">Encontre a sua Essência</h1>
+                <p class="text-gray-400 text-sm md:text-lg font-light mb-10">Descubra qual fragrância combina melhor com o seu estilo.</p>
+                <button onclick="startQuiz()" class="btn-main px-10 py-4 rounded-full text-xs uppercase tracking-[0.2em] font-semibold">Começar Consultoria</button>
+            </div>
 
-        <div id="menu-drawer" class="drawer">
-                <div class="drawer-close" onclick="toggleDrawer('menu-drawer')">&times;</div>
-                <h2 class="serif" style="margin-bottom: 40px;">Menu</h2>
-                <button class="btn-outline upper" onclick="resetApp()">Reiniciar Quiz</button>
-                <button class="btn-outline upper" onclick="openAdm()" style="margin-top: 20px;">Acesso ADM</button>
-            </div>
+            <div id="quiz-container" class="hidden w-full max-w-lg card-glass p-6 md:p-10 rounded-2xl fade-in">
+                <div class="flex items-center justify-between mb-8 text-[9px] uppercase tracking-widest text-silver">
+                    <span id="question-count">Questão 1 de 3</span>
+                </div>
+                <h2 id="question-text" class="text-xl md:text-2xl mb-8 font-serif text-white italic"></h2>
+                <div id="options-grid" class="grid grid-cols-1 gap-3"></div>
+            </div>
+        </section>
 
-        <section id="sec-quiz" class="active">
-                <div style="max-width: 500px; width: 100%;">
-                        <p class="upper" id="q-step" style="color: var(--muted); margin-bottom: 10px;"></p>
-                        <h2 id="q-title" class="serif" style="font-size: 1.8rem; margin-bottom: 40px;">...</h2>
-                        <div id="q-options"></div>
-                    </div>
-            </section>
+        <!-- LEAD SECTION -->
+        <section id="lead-section" class="hidden flex-grow flex items-center justify-center px-4 py-10">
+            <div class="w-full max-w-md card-glass p-8 rounded-3xl text-center fade-in">
+                <h2 class="text-2xl mb-2 text-luxury font-serif italic">Identificação</h2>
+                <p class="text-gray-500 text-[10px] uppercase mb-8 tracking-widest">Para personalizar a sua experiência</p>
+                <form onsubmit="handleLead(event)" class="space-y-6 text-left">
+                    <div class="space-y-1">
+                        <label class="text-[9px] uppercase tracking-widest text-silver ml-1">Seu Nome</label>
+                        <input type="text" id="lead-name" required class="input-luxury" placeholder="Ex: João Silva">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[9px] uppercase tracking-widest text-silver ml-1">WhatsApp</label>
+                        <input type="tel" id="lead-phone" required class="input-luxury" placeholder="Ex: 959481506">
+                    </div>
+                    <button type="submit" class="w-full btn-main py-4 rounded-xl text-xs uppercase tracking-[0.3em] font-bold mt-4">Ver Catálogo</button>
+                </form>
+            </div>
+        </section>
 
-        <section id="sec-lead">
-                <div style="max-width: 400px; width: 100%;">
-                        <h2 class="serif" style="font-size: 2.2rem;">Identidade</h2>
-                        <p class="upper" style="margin: 20px 0; color: var(--muted);">Para acessar a curadoria em Luanda
-            </p>
-                        <input type="text" id="lead-n" placeholder="Nome Completo">
-                        <input type="tel" id="lead-t" placeholder="WhatsApp (+244)">
-                        <button class="btn-white upper" onclick="saveLead()">Abrir Catálogo</button>
-                    </div>
-            </section>
+        <!-- CATALOG -->
+        <section id="catalog-section" class="hidden px-4 md:px-12 py-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-6xl text-luxury font-serif italic mb-2">Catálogo Exclusivo</h2>
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-gray-500">Seleção para <span id="user-name-display" class="text-white"></span></p>
+                </div>
+                <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+                <div id="catalog-loader" class="flex justify-center py-20 hidden">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gold"></div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-        <section id="sec-shop">
-                <p class="upper" style="color: var(--muted);">Catálogo Oficial</p>
-                <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 40px;">Maison Frecoli</h2>
-                <div class="store-grid" id="shop-list"></div>
-                <p onclick="toggleDrawer('menu-drawer')" style="margin-top: 100px; color: #222; cursor: pointer;"
-            class="upper">
-                        Preferências</p>
-            </section>
+    <!-- FOOTER -->
+    <footer class="bg-black border-t border-white/5 py-12 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
+            <div>
+                <div class="text-xl font-bold tracking-[0.3em] text-luxury uppercase mb-4">Frecoli</div>
+                <p class="text-[10px] text-gray-500 leading-relaxed uppercase tracking-widest">O Luxo nos detalhes, a alma na fragrância. Especialistas em perfumaria de elite e acessórios exclusivos.</p>
+            </div>
+            <div class="text-[11px] text-gray-400 space-y-3">
+                <p class="uppercase tracking-widest text-gold mb-2 font-bold">Contacto Oficial</p>
+                <div class="flex items-center justify-center md:justify-start gap-2">
+                    <span>🇦🇴</span>
+                    <span>+244 959 481 506</span>
+                </div>
+                <p>colifinance99@gmail.com</p>
+                <p>Luanda, Angola</p>
+            </div>
+            <div class="flex flex-col justify-between items-center md:items-end">
+                <div class="flex gap-4 mb-6">
+                    <div class="w-8 h-8 rounded-full border border-zinc-800 flex items-center justify-center text-silver text-[10px]">IG</div>
+                    <div class="w-8 h-8 rounded-full border border-zinc-800 flex items-center justify-center text-silver text-[10px]">FB</div>
+                    <div class="w-8 h-8 rounded-full border border-zinc-800 flex items-center justify-center text-silver text-[10px]">WA</div>
+                </div>
+                <div class="text-[9px] text-zinc-700 uppercase tracking-[0.4em]">
+                    © 2024 FRECOLI LUXURY • ANGOLA
+                </div>
+            </div>
+        </div>
+    </footer>
 
-        <footer>
-                <div class="footer-grid">
-                        <div>
-                                <div class="footer-logo upper">Frecoli</div>
-                                <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.6;">A essência do luxo
-                    e da
-                                        sofisticação em Angola. Fragrâncias e acessórios selecionados para quem busca
-                    exclusividade.</p>
-                            </div>
-                        <div>
-                                <p class="footer-title">Navegação</p>
-                                <a href="#" class="footer-link upper" onclick="resetApp()">Início</a>
-                                <a href="#" class="footer-link upper" onclick="nav('shop')">Produtos</a>
-                                <a href="#" class="footer-link upper">Termos de Serviço</a>
-                            </div>
-                        <div>
-                                <p class="footer-title">Contacto</p>
-                                <p class="footer-link">Luanda, Angola</p>
-                                <p class="footer-link">Whatssap: +244 959 481 506</p>
-                                <p class="footer-link">E-mail: colifinance99@gmail.com</p>
-                            </div>
-                    </div>
-                <div class="footer-bottom upper">
-                        © 2026 Maison Frecoli. Todos os direitos reservados.
-                    </div>
-            </footer>
+    <!-- MODALS (ADMIN, CART) -->
+    <div id="admin-modal" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90">
+        <div class="bg-zinc-900 w-full max-w-2xl rounded-2xl border border-white/10 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-5 bg-black flex justify-between items-center border-b border-gold/30">
+                <span class="text-[10px] uppercase tracking-[0.3em] text-gold">Gestão Administrativa</span>
+                <button onclick="toggleAdminPanel()" class="text-white text-2xl">&times;</button>
+            </div>
+            
+            <div id="admin-login" class="p-10 text-center">
+                <input type="password" id="admin-pass" class="input-luxury text-center mb-6" placeholder="Senha de Acesso">
+                <button onclick="verifyAdmin()" class="w-full btn-main py-3 rounded-lg text-[10px] uppercase tracking-widest font-bold">Aceder</button>
+            </div>
 
-        <div id="panel-adm">
-                <div style="max-width: 500px; margin: 0 auto;">
-                        <h2 class="serif">Publicar Item</h2>
-                        <input type="text" id="adm-name" placeholder="Nome do Produto">
-                        <input type="number" id="adm-price" placeholder="Preço (Kz)">
-                        <textarea id="adm-desc" rows="3"
-                placeholder="Descrição (Notas olfativas, Detalhes...)"></textarea>
-                        <input type="file" id="adm-img" accept="image/*">
-                      <button class="btn-white upper" onclick="handleUpload()">Publicar na Loja</button>
+            <div id="admin-dashboard" class="hidden p-6 overflow-y-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <h4 class="text-[10px] uppercase tracking-widest text-silver mb-4">Novo Item</h4>
+                        <input type="text" id="p-name" placeholder="Nome" class="input-luxury">
+                        <input type="text" id="p-price" placeholder="Preço (ex: 45.000 Kz)" class="input-luxury">
+                        <textarea id="p-desc" placeholder="Descrição" class="input-luxury h-20"></textarea>
+                        <input type="file" id="p-img-file" accept="image/*" class="text-[10px] text-gray-500">
+                        <button id="btn-publish" onclick="createProduct()" class="w-full btn-main py-4 rounded-xl text-[10px] uppercase tracking-widest font-bold">Publicar Produto</button>
+                    </div>
+                    <div>
+                        <h4 class="text-[10px] uppercase tracking-widest text-silver mb-4">Stock Atual</h4>
+                        <div id="admin-products-list" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        <h3 class="serif" style="margin-top: 50px;">Gerir Produtos</h3>
-                        <div id="adm-items-list" style="margin-top: 20px;"></div>
-                        <button class="btn-outline upper" onclick="closeAdm()">Sair do Painel</button>
-                    </div>
-            </div>
+    <div id="cart-modal" class="hidden fixed inset-0 z-[60] flex justify-end bg-black/80">
+        <div class="bg-zinc-950 w-full max-w-sm h-full shadow-2xl flex flex-col border-l border-white/10">
+            <div class="p-6 bg-black flex justify-between items-center border-b border-white/5">
+                <h3 class="text-lg font-serif text-luxury italic">Minha Cesta</h3>
+                <button onclick="closeCart()" class="text-white text-3xl font-light">&times;</button>
+            </div>
+            <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
+            <div class="p-6 border-t border-white/5 bg-black">
+                <button onclick="checkout()" class="w-full btn-main py-4 rounded-xl uppercase tracking-widest text-[10px] font-bold">Finalizar no WhatsApp</button>
+            </div>
+        </div>
+    </div>
 
-       
     <script>
-        // 1. CONFIGURAÇÕES INICIAIS
-        const SUPABASE_URL = 'https://mrqhixvxbwjoscynoxdc.supabase.co'; // COLOQUE SUA URL AQUI
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ycWhpeHZ4Yndqb3NjeW5veGRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MTcwODYsImV4cCI6MjA4NTk5MzA4Nn0.poZBGAm0UgmCO82TU9ZM5WhbAkGdwLXfQBa0KlH8mq0';           // COLOQUE SUA CHAVE AQUI
+        const SUPABASE_URL = 'https://zfhuomzkmwquqnrfzspj.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmaHVvbXprbXdxdXFucmZ6c3BqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMTg1NjQsImV4cCI6MjA4NjU5NDU2NH0.786i5uhC4TbafTa3ZPAv6UCBu47b_pnhE_rAejXrJAs';
 
-        let _supabase = null;
-        try {
-            // Tenta conectar, mas se falhar, o site não trava
-            _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (e) {
-            console.error("Erro na conexão Supabase. Verifique o link no <head>.", e);
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let products = [];
+        let cart = [];
+        let userData = { name: '', phone: '' };
+        let currentQIdx = 0;
+
+        function showToast(msg, error = false) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            t.style.backgroundColor = error ? '#7f1d1d' : '#14532d';
+            t.style.color = 'white';
+            setTimeout(() => t.style.display = 'none', 4000);
         }
 
-        // 2. VARIÁVEIS DO SISTEMA
-        let cart = [];
-        let clientName = localStorage.getItem('frecoli_client') || "";
-        let currentStep = 0;
-
-        const quizSteps = [
-            { t: "O que você procura hoje?", o: ["Fragrâncias Únicas", "Acessórios de Luxo", "Ambos"] },
-            { t: "Sua fragrância favorita é...", o: ["Amadeirada", "Fresca/Cítrica", "Oriental/Doce"] },
-            { t: "Qual o seu estilo?", o: ["Minimalista", "Impactante", "Clássico"] },
-            { t: "Faixa de investimento?", o: ["Até 40.000 Kz", "Acima de 40.000 Kz"] }
+        const quizQuestions = [
+            { t: "Quem irá usar o perfume?", o: ["Eu Próprio", "Presente Especial"] },
+            { t: "Qual o seu estilo?", o: ["Discreto/Fresco", "Intenso/Marcante", "Clássico"] },
+            { t: "Para que ocasião?", o: ["Uso Diário", "Eventos/Noite", "Trabalho"] }
         ];
 
-        // 3. NAVEGAÇÃO BÁSICA
-        function nav(id) {
-            // Esconde todas as seções
-            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-            // Mostra a seção desejada
-            const target = document.getElementById(`sec-${id}`);
-            if (target) {
-                target.style.display = 'flex';
-                target.classList.add('active');
+        function startQuiz() {
+            document.getElementById('quiz-intro').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = quizQuestions[currentQIdx];
+            document.getElementById('question-count').innerText = `Questão ${currentQIdx + 1} de 3`;
+            document.getElementById('question-text').innerText = q.t;
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            q.o.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-white/5 bg-white/[0.02] text-[11px] uppercase tracking-wider text-gray-300 hover:border-gold transition-all";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if(currentQIdx < quizQuestions.length - 1) { currentQIdx++; renderQuestion(); }
+                    else { showLead(); }
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function showLead() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('lead-section').classList.remove('hidden');
+        }
+
+        async function handleLead(e) {
+            e.preventDefault();
+            userData.name = document.getElementById('lead-name').value;
+            userData.phone = document.getElementById('lead-phone').value;
+            document.getElementById('lead-section').classList.add('hidden');
+            document.getElementById('catalog-section').classList.remove('hidden');
+            document.getElementById('user-name-display').innerText = userData.name;
+            fetchProducts();
+        }
+
+        async function fetchProducts() {
+            document.getElementById('catalog-loader').classList.remove('hidden');
+            const { data, error } = await _supabase.from('produtos').select('*').order('created_at', { ascending: false });
+            document.getElementById('catalog-loader').classList.add('hidden');
+            if (error) {
+                console.error("Erro na busca:", error);
+                showToast("Erro ao carregar produtos", true);
+            } else {
+                products = data || [];
+                renderCatalog();
+                if(!document.getElementById('admin-dashboard').classList.contains('hidden')) renderAdminList();
             }
         }
 
-        // 4. LÓGICA DO QUIZ (ESSA É A QUE PRECISA APARECER)
-        function initQuiz() {
-            // Se o cliente já tem nome salvo, ele pula pro catálogo
-            if (clientName && currentStep === 0) {
-                nav('shop');
-                renderShop();
-                return;
-            }
-
-            nav('quiz'); // Força a exibição da seção do quiz
-
-            const stepData = quizSteps[currentStep];
-            const titleEl = document.getElementById('q-title');
-            const stepEl = document.getElementById('q-step');
-            const optionsEl = document.getElementById('q-options');
-
-            if (stepEl) stepEl.innerText = `Passo ${currentStep + 1} de ${quizSteps.length}`;
-            if (titleEl) titleEl.innerText = stepData.t;
-
-            if (optionsEl) {
-                optionsEl.innerHTML = '';
-                stepData.o.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'opt-btn upper';
-                    btn.innerText = opt;
-                    btn.onclick = () => {
-                        currentStep++;
-                        if (currentStep < quizSteps.length) {
-                            initQuiz();
-                        } else {
-                            nav('lead');
-                        }
-                    };
-                    optionsEl.appendChild(btn);
-                });
-            }
+        function renderCatalog() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+            products.forEach((p, idx) => {
+                grid.innerHTML += `
+                    <div class="card-glass rounded-2xl overflow-hidden fade-in">
+                        <img src="${p.imagem_url}" class="w-full aspect-[4/5] object-cover">
+                        <div class="p-5">
+                            <h3 class="text-xs font-serif text-luxury italic mb-1 uppercase tracking-widest">${p.nome}</h3>
+                            <div class="flex items-center justify-between mt-4">
+                                <span class="text-xs font-bold text-white">${p.preco}</span>
+                                <button onclick="addToCart(${idx})" class="text-[8px] border border-gold px-4 py-1.5 rounded-full uppercase tracking-widest hover:bg-gold hover:text-black transition">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        // 5. BANCO DE DADOS (SUPABASE)
-async function renderShop() {
-    if (!_supabase) return;
-
-    const list = document.getElementById('shop-list');
-    const admList = document.getElementById('adm-items-list');
-
-    try {
-        // Buscamos os dados mais recentes do banco
-        const { data: produtos, error } = await _supabase
-            .from('produtos')
-            .select('*')
-            .order('id', { ascending: false }); // Mostra os novos primeiro
-
-        if (error) throw error;
-
-        // Limpamos os containers antes de renderizar
-        if (list) list.innerHTML = '';
-        if (admList) admList.innerHTML = '';
-
-        if (!produtos || produtos.length === 0) {
-            if (list) list.innerHTML = '<p class="upper">Nenhum produto encontrado.</p>';
-            return;
-        }
-
-        produtos.forEach((p) => {
-            // Renderiza na Loja
-            if (list) {
-                list.innerHTML += `
-                <div class="prod-card">
-                    <div class="img-box"><img src="${p.img}" onerror="this.src='https://via.placeholder.com/400?text=Sem+Foto'"></div>
-                    <h3 class="serif">${p.name}</h3>
-                    <p class="price serif">${Number(p.price).toLocaleString()} Kz</p>
-                    <p class="desc-text">${p.desc || ''}</p>
-                    <button class="btn-white upper" onclick="addToCart('${p.name}', ${p.price}, '${p.img}')">Adicionar à Sacola</button>
-                </div>`;
-            }
-            
-            // Renderiza na Gestão ADM
-            if (admList) {
-                admList.innerHTML += `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid #222; font-size:0.8rem;">
-                    <span>${p.name}</span>
-                    <button onclick="delProduct(${p.id})" style="background:none; border:1px solid red; color:red; padding:5px 10px; cursor:pointer;">APAGAR</button>
-                </div>`;
-            }
-        });
-
-    } catch (err) {
-        console.error("Erro ao carregar:", err.message);
-    }
-}
-
-        // 6. FUNÇÕES DO ADM (VERSÃO CORRIGIDA COM STORAGE)
-        async function handleUpload() {
-            const n = document.getElementById('adm-name').value;
-            const p = document.getElementById('adm-price').value;
-            const d = document.getElementById('adm-desc').value;
-            const file = document.getElementById('adm-img').files[0];
-
-            if (!n || !p || !file) return alert("Preencha todos os campos e selecione uma foto!");
-
-            try {
-                // 1. Criar um nome único para o ficheiro (evita conflitos)
-                const fileName = `${Date.now()}_${file.name}`;
-
-                // 2. Upload para o Storage (Certifique-se que criou o bucket 'fotos-produtos' no Supabase)
-                const { data: storageData, error: storageError } = await _supabase
-                    .storage
-                    .from('fotos-produtos')
-                    .upload(fileName, file);
-
-                if (storageError) throw storageError;
-
-                // 3. Obter a URL pública do ficheiro que acabamos de enviar
-                const { data: urlData } = _supabase
-                    .storage
-                    .from('fotos-produtos')
-                    .getPublicUrl(fileName);
-
-                const publicUrl = urlData.publicUrl;
-
-                // 4. Salvar no Banco de Dados usando o LINK da foto
-                const { error: dbError } = await _supabase.from('produtos').insert([
-                    { name: n, price: p, desc: d, img: publicUrl }
-                ]);
-
-                if (dbError) throw dbError;
-
-                alert("Produto publicado com sucesso!");
-
-                // Limpar campos e fechar
-                document.getElementById('adm-name').value = "";
-                document.getElementById('adm-price').value = "";
-                document.getElementById('adm-desc').value = "";
-                document.getElementById('adm-img').value = "";
-
-                renderShop();
-                closeAdm();
-
-            } catch (err) {
-                console.error(err);
-                alert("Erro ao processar: " + err.message);
-            }
-        }
-
-
-        // 7. FUNÇÕES DO CARRINHO
-        function addToCart(name, price, img) {
-            cart.push({ name, price, img });
-            updateCart();
-            toggleDrawer('cart-drawer');
-        }
-
+        function addToCart(idx) { cart.push(products[idx]); updateCart(); showToast("Item adicionado"); }
         function updateCart() {
-            const countEl = document.getElementById('cart-count');
-            const listEl = document.getElementById('cart-items-list');
-            const footerEl = document.getElementById('cart-footer');
-            const totalEl = document.getElementById('total-value');
-
-            if (countEl) countEl.innerText = cart.length;
-            if (listEl) {
-                listEl.innerHTML = '';
-                let total = 0;
-                cart.forEach((item, i) => {
-                    total += Number(item.price);
-                    listEl.innerHTML += `
-                <div class="cart-item">
-                    <img src="${item.img}">
-                    <div style="flex-grow:1">
-                        <h4 class="serif" style="font-size:0.9rem;">${item.name}</h4>
-                        <p class="small">${item.price} Kz</p>
-                    </div>
-                    <span onclick="removeItem(${i})" style="cursor:pointer; font-size:1.2rem;">&times;</span>
-                </div>`;
-                });
-                if (totalEl) totalEl.innerText = total.toLocaleString() + ' Kz';
-                if (footerEl) footerEl.style.display = cart.length > 0 ? 'block' : 'none';
-            }
+            document.getElementById('cart-count').innerText = cart.length;
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            cart.forEach((item, i) => {
+                container.innerHTML += `
+                    <div class="flex items-center gap-4 bg-white/5 p-3 rounded-xl">
+                        <img src="${item.imagem_url}" class="w-10 h-10 object-cover rounded-lg">
+                        <div class="flex-grow"><p class="text-[10px] text-white uppercase">${item.nome}</p></div>
+                        <button onclick="cart.splice(${i}, 1); updateCart();" class="text-gray-500">&times;</button>
+                    </div>`;
+            });
         }
 
-        function removeItem(i) { cart.splice(i, 1); updateCart(); }
+        function openCart() { document.getElementById('cart-modal').classList.remove('hidden'); }
+        function closeCart() { document.getElementById('cart-modal').classList.add('hidden'); }
 
-        function checkoutWA() {
-            let total = 0;
-            let text = cart.map(item => {
-                total += Number(item.price);
-                return `- ${item.name} (${item.price} Kz)`;
-            }).join('%0A');
-            const msg = `Olá Frecoli! Sou ${clientName}.%0A%0AQuero encomendar:%0A${text}%0A%0ATotal: ${total.toLocaleString()} Kz`;
+        function checkout() {
+            let msg = `*PEDIDO FRECOLI*%0ACliente: ${userData.name}%0A%0A`;
+            cart.forEach(i => msg += `• ${i.nome} - ${i.preco}%0A`);
             window.open(`https://wa.me/244959481506?text=${msg}`);
         }
 
-        // 8. UTILITÁRIOS
-        function saveLead() {
-            const n = document.getElementById('lead-n').value;
-            if (!n) return alert("Por favor, informe seu nome.");
-            clientName = n;
-            localStorage.setItem('frecoli_client', n);
-            nav('shop');
-            renderShop();
+        function toggleAdminPanel() { document.getElementById('admin-modal').classList.toggle('hidden'); }
+        function verifyAdmin() {
+            if(document.getElementById('admin-pass').value === "FRECOLI2024") {
+                document.getElementById('admin-login').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                fetchProducts();
+            } else showToast("Senha Inválida", true);
         }
-        function toggleDrawer(id) { document.getElementById(id).classList.toggle('active'); }
-        function openAdm() { if (prompt("Senha:") === "frecolivendas") document.getElementById('panel-adm').style.display = 'block'; }
-        function closeAdm() { document.getElementById('panel-adm').style.display = 'none'; }
-        function resetApp() { localStorage.removeItem('frecoli_client'); location.reload(); }
 
-        // --- INICIALIZAÇÃO SEGURA ---
-        window.onload = () => {
-            initQuiz();
-            renderShop();
-        };
+        async function createProduct() {
+            const btn = document.getElementById('btn-publish');
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const file = document.getElementById('p-img-file').files[0];
+
+            if(!name || !price || !file) return showToast("Faltam dados", true);
+
+            btn.disabled = true;
+            btn.innerText = "A PUBLICAR...";
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const { error } = await _supabase.from('produtos').insert([{ nome: name, preco: price, imagem_url: reader.result }]);
+                if (error) {
+                    console.error("Erro insert:", error);
+                    showToast("Erro: " + error.message, true);
+                    btn.disabled = false;
+                    btn.innerText = "Publicar Produto";
+                } else {
+                    showToast("Sucesso!");
+                    location.reload();
+                }
+            };
+        }
+
+        function renderAdminList() {
+            const list = document.getElementById('admin-products-list');
+            list.innerHTML = '';
+            products.forEach(p => {
+                list.innerHTML += `
+                    <div class="p-3 bg-black flex justify-between items-center rounded-lg border border-white/5 text-[9px] uppercase">
+                        <span class="text-white truncate max-w-[150px]">${p.nome}</span>
+                        <button onclick="deleteProd(${p.id}, this)" class="text-red-500 hover:text-red-300 transition-colors px-2 py-1">Apagar</button>
+                    </div>`;
+            });
+        }
+
+        async function deleteProd(id, btn) {
+            if(!confirm("Tem certeza que deseja apagar este produto definitivamente?")) return;
+            
+            // Feedback imediato no botão
+            const originalText = btn.innerText;
+            btn.innerText = "...";
+            btn.disabled = true;
+
+            try {
+                const { error } = await _supabase
+                    .from('produtos')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    console.error("Erro ao apagar:", error);
+                    showToast("Erro: " + error.message, true);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                } else {
+                    showToast("Produto removido com sucesso!");
+                    // Recarrega os dados para atualizar as duas listas
+                    await fetchProducts();
+                }
+            } catch (err) {
+                console.error("Erro inesperado:", err);
+                showToast("Erro de rede ao apagar", true);
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
     </script>
 </body>
-
 </html>
