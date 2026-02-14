@@ -6,7 +6,6 @@
     <title>FRECOLI | Fragrâncias & Acessórios de Luxo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <link rel="shortcut icon" href="icone.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -240,7 +239,11 @@
                 <button onclick="closeCart()" class="text-white text-3xl font-light">&times;</button>
             </div>
             <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
-            <div class="p-6 border-t border-white/5 bg-black">
+            <div class="p-6 border-t border-white/5 bg-black space-y-4">
+                <div class="flex justify-between items-center px-2">
+                    <span class="text-[10px] uppercase tracking-widest text-gray-400">Total Estimado</span>
+                    <span id="cart-total" class="text-sm font-bold text-luxury">0 Kz</span>
+                </div>
                 <button onclick="checkout()" class="w-full btn-main py-4 rounded-xl uppercase tracking-widest text-[10px] font-bold">Finalizar no WhatsApp</button>
             </div>
         </div>
@@ -264,6 +267,16 @@
             t.style.backgroundColor = error ? '#7f1d1d' : '#14532d';
             t.style.color = 'white';
             setTimeout(() => t.style.display = 'none', 4000);
+        }
+
+        function parsePrice(priceStr) {
+            if (!priceStr) return 0;
+            const clean = priceStr.replace(/[^\d]/g, '');
+            return parseInt(clean) || 0;
+        }
+
+        function formatPrice(num) {
+            return num.toLocaleString('pt-AO') + " Kz";
         }
 
         const quizQuestions = [
@@ -331,7 +344,9 @@
             products.forEach((p, idx) => {
                 grid.innerHTML += `
                     <div class="card-glass rounded-2xl overflow-hidden fade-in">
-                        <img src="${p.imagem_url}" class="w-full aspect-[4/5] object-cover">
+                        <div class="relative overflow-hidden group">
+                           <img src="${p.imagem_url}" class="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-110">
+                        </div>
                         <div class="p-5">
                             <h3 class="text-xs font-serif text-luxury italic mb-1 uppercase tracking-widest">${p.nome}</h3>
                             <div class="flex items-center justify-between mt-4">
@@ -345,36 +360,64 @@
         }
 
         function addToCart(idx) { cart.push(products[idx]); updateCart(); showToast("Item adicionado"); }
+        
         function updateCart() {
             document.getElementById('cart-count').innerText = cart.length;
             const container = document.getElementById('cart-items');
             container.innerHTML = '';
+            
+            let total = 0;
+            
             cart.forEach((item, i) => {
+                total += parsePrice(item.preco);
                 container.innerHTML += `
-                    <div class="flex items-center gap-4 bg-white/5 p-3 rounded-xl">
-                        <img src="${item.imagem_url}" class="w-10 h-10 object-cover rounded-lg">
-                        <div class="flex-grow"><p class="text-[10px] text-white uppercase">${item.nome}</p></div>
-                        <button onclick="cart.splice(${i}, 1); updateCart();" class="text-gray-500">&times;</button>
+                    <div class="flex items-center gap-4 bg-white/5 p-3 rounded-xl border border-white/5">
+                        <img src="${item.imagem_url}" class="w-12 h-12 object-cover rounded-lg">
+                        <div class="flex-grow">
+                            <p class="text-[10px] text-white uppercase font-semibold">${item.nome}</p>
+                            <p class="text-[9px] text-gold/70 mt-1">${item.preco}</p>
+                        </div>
+                        <button onclick="cart.splice(${i}, 1); updateCart();" class="text-gray-500 hover:text-white p-2">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                             </svg>
+                        </button>
                     </div>`;
             });
+
+            document.getElementById('cart-total').innerText = formatPrice(total);
         }
 
         function openCart() { document.getElementById('cart-modal').classList.remove('hidden'); }
         function closeCart() { document.getElementById('cart-modal').classList.add('hidden'); }
 
         function checkout() {
-            let msg = `*PEDIDO FRECOLI*%0ACliente: ${userData.name}%0A%0A`;
-            cart.forEach(i => msg += `• ${i.nome} - ${i.preco}%0A`);
+            if (cart.length === 0) return showToast("A cesta está vazia", true);
+            let total = 0;
+            let msg = `*PEDIDO FRECOLI LUXURY*%0A%0A`;
+            msg += `*Cliente:* ${userData.name}%0A`;
+            msg += `*Contacto:* ${userData.phone}%0A%0A`;
+            msg += `*ITENS:*%0A`;
+            cart.forEach(i => {
+                msg += `• ${i.nome} - ${i.preco}%0A`;
+                total += parsePrice(i.preco);
+            });
+            msg += `%0A*TOTAL ESTIMADO:* ${formatPrice(total)}%0A%0A`;
+            msg += `_Por favor, confirme a disponibilidade dos itens acima._`;
             window.open(`https://wa.me/244959481506?text=${msg}`);
         }
 
         function toggleAdminPanel() { document.getElementById('admin-modal').classList.toggle('hidden'); }
+        
         function verifyAdmin() {
-            if(document.getElementById('admin-pass').value === "FRECOLI2024") {
+            const pass = document.getElementById('admin-pass').value;
+            if(pass === "FRECOLI2024") {
                 document.getElementById('admin-login').classList.add('hidden');
                 document.getElementById('admin-dashboard').classList.remove('hidden');
                 fetchProducts();
-            } else showToast("Senha Inválida", true);
+            } else {
+                showToast("Senha Inválida", true);
+            }
         }
 
         async function createProduct() {
@@ -419,30 +462,34 @@
         async function deleteProd(id, btn) {
             if(!confirm("Tem certeza que deseja apagar este produto definitivamente?")) return;
             
-            // Feedback imediato no botão
             const originalText = btn.innerText;
             btn.innerText = "...";
             btn.disabled = true;
 
             try {
-                const { error } = await _supabase
+                // Tentativa de DELETE forçado
+                const { data, error, status } = await _supabase
                     .from('produtos')
                     .delete()
-                    .eq('id', id);
+                    .match({ id: id });
 
                 if (error) {
-                    console.error("Erro ao apagar:", error);
-                    showToast("Erro: " + error.message, true);
+                    console.error("Erro Supabase:", error);
+                    showToast(`Erro ${status}: ${error.message}`, true);
                     btn.innerText = originalText;
                     btn.disabled = false;
                 } else {
                     showToast("Produto removido com sucesso!");
-                    // Recarrega os dados para atualizar as duas listas
+                    // Forçar atualização local antes de novo fetch para garantir UI limpa
+                    products = products.filter(p => p.id !== id);
+                    renderCatalog();
+                    renderAdminList();
+                    // Re-sincronizar com o servidor
                     await fetchProducts();
                 }
             } catch (err) {
-                console.error("Erro inesperado:", err);
-                showToast("Erro de rede ao apagar", true);
+                console.error("Erro inesperado no delete:", err);
+                showToast("Erro de conexão", true);
                 btn.innerText = originalText;
                 btn.disabled = false;
             }
